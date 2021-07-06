@@ -1167,7 +1167,6 @@ void API_ROUTINE gds__trace(const TEXT* text)
 	gds__trace_raw(s.c_str(), s.length());
 }
 
-
 void API_ROUTINE gds__log(const TEXT* text, ...)
 {
 /**************************************
@@ -1216,6 +1215,93 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
 #endif // DARWIN
 
 	Firebird::PathName name = fb_utils::getPrefix(Firebird::IConfigManager::DIR_LOG, LOGFILE);
+
+#ifdef WIN_NT
+	WaitForSingleObject(CleanupTraceHandles::trace_mutex_handle, INFINITE);
+#endif
+	FILE* file = os_utils::fopen(name.c_str(), "a");
+	if (file != NULL)
+	{
+#ifndef WIN_NT
+		// Get an exclusive lock on the file. That way potential race conditions
+		// are avoided - both between threads and between processes.
+#ifdef HAVE_FLOCK
+		if (flock(fileno(file), LOCK_EX))
+#else
+		if (os_utils::lockf(fileno(file), F_LOCK, 0))
+#endif
+		{
+			// give up
+			fclose(file);
+			return;
+		}
+
+		// Now make sure file is correctly positioned after lock is got
+		fseek(file, 0, SEEK_END);
+#endif
+
+		fprintf(file, "\n%s\t%.25s\t", hostName, ctime(&now));
+		va_start(ptr, text);
+		vfprintf(file, text, ptr);
+		va_end(ptr);
+		fprintf(file, "\n\n");
+
+		// This will release file lock set in posix case
+		fclose(file);
+	}
+#ifdef WIN_NT
+	ReleaseMutex(CleanupTraceHandles::trace_mutex_handle);
+#endif
+}
+
+void API_ROUTINE gds__log_gfix(const TEXT* text, ...)
+{
+	/**************************************
+	 *
+	 *	g d s _ gfix _ l o g
+	 *
+	 **************************************
+	 *
+	 * Functional description
+	 *	Post an event from gfix to a log file.
+	 *
+	 **************************************/
+	va_list ptr;
+	time_t now;
+
+#ifdef HAVE_GETTIMEOFDAY
+	struct timeval tv;
+	GETTIMEOFDAY(&tv);
+	now = tv.tv_sec;
+#else
+	now = time((time_t*)0);
+#endif
+
+	TEXT hostName[MAXPATHLEN];
+	ISC_get_host(hostName, MAXPATHLEN);
+
+#ifdef DARWIN
+
+	if (isSandboxed())
+	{
+		static Firebird::GlobalPtr<Firebird::Mutex> logMutex;	// protects big static
+		static char buffer[10240];								// buffer for messages
+
+		Firebird::MutexLockGuard(logMutex, FB_FUNCTION);
+		fb_utils::snprintf(buffer, sizeof(buffer), "\n\n%s\t%.25s\t", hostName, ctime(&now));
+		unsigned hdrlen = strlen(buffer);
+		va_start(ptr, text);
+		VSNPRINTF(&buffer[hdrlen], sizeof(buffer) - hdrlen, text, ptr);
+		va_end(ptr);
+		buffer[sizeof(buffer) - 1] = '\0';		// be safe
+
+		osLog(buffer);
+		return;
+	}
+
+#endif // DARWIN
+
+	Firebird::PathName name = fb_utils::getPrefix(Firebird::IConfigManager::DIR_LOG, GFIXLOGFILE);
 
 #ifdef WIN_NT
 	WaitForSingleObject(CleanupTraceHandles::trace_mutex_handle, INFINITE);

@@ -340,6 +340,7 @@
 #define FB_TZDATADIR ""
 
 #define FB_LOGFILENAME "firebird.log"
+#define FB_GFIXLOGFILENAME "gfix.log"
 
 #ifndef HAVE_SOCKLEN_T
 typedef int socklen_t;

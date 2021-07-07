@@ -63,6 +63,9 @@
 #include "../common/ThreadStart.h"
 #include "../common/Int128.h"
 
+#include "../common/config/config.h"
+#include "../common/config/dir_list.h"
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -131,6 +134,7 @@ const SLONG GENERIC_SQLCODE		= -999;
 #include "../common/classes/SafeArg.h"
 #include "../common/classes/MsgPrint.h"
 
+using Firebird::Config;
 using Firebird::TimeStamp;
 using Firebird::TimeZoneUtil;
 using Firebird::BlrReader;
@@ -1171,7 +1175,7 @@ void API_ROUTINE gds__log_fwriter(const TEXT* text, const char* const logfile, v
 {
 /**************************************
  *
- *	g d s _ l o g _ fwriter
+ *	g d s _ l o g _ f w r i t e r
  *
  **************************************
  *
@@ -1283,7 +1287,8 @@ void API_ROUTINE gds__log_gfix(const TEXT* text, ...)
  **************************************/
 	va_list ptr;
 	va_start(ptr, text);
-	gds__log_fwriter(text, GFIXLOGFILE, ptr);
+	const char* File = Config::getGfixLogFile();
+	gds__log_fwriter(text, File, ptr);
 	va_end(ptr);
 }
 

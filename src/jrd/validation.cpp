@@ -1027,7 +1027,6 @@ bool Validation::run(thread_db* tdbb, USHORT flags)
 		ThreadSweepGuard sweepGuard(tdbb);
 
 		gds__log_gfix("Database: %s\n\tValidation started", fileName.c_str());
-		//gds__log("Database: %s\n\tValidation started", fileName.c_str());
 
 		walk_database();
 		if (vdr_errors || vdr_warns)
@@ -1048,8 +1047,6 @@ bool Validation::run(thread_db* tdbb, USHORT flags)
 
 		gds__log_gfix("Database: %s\n\tValidation finished: %d errors, %d warnings, %d fixed",
 			fileName.c_str(), vdr_errors, vdr_warns, vdr_fixed);
-		//gds__log("Database: %s\n\tValidation finished: %d errors, %d warnings, %d fixed",
-			//fileName.c_str(), vdr_errors, vdr_warns, vdr_fixed);
 	}	// try
 	catch (const Firebird::Exception& ex)
 	{
@@ -1149,12 +1146,9 @@ Validation::RTN Validation::corrupt(int err_code, const jrd_rel* relation, ...)
 	{
 		gds__log_gfix("Database: %s\n\t%s in table %s (%d)",
 			fn, s.c_str(), relation->rel_name.c_str(), relation->rel_id);
-		//gds__log("Database: %s\n\t%s in table %s (%d)",
-			//fn, s.c_str(), relation->rel_name.c_str(), relation->rel_id);
 	}
 	else {
 		gds__log_gfix("Database: %s\n\t%s", fn, s.c_str());
-		//gds__log("Database: %s\n\t%s", fn, s.c_str());
 	}
 
 	s.append("\n");
@@ -3095,7 +3089,6 @@ Validation::RTN Validation::walk_relation(jrd_rel* relation)
 				"bugcheck during scan of table %d (%s)" :
 				"bugcheck during scan of table %d";
 			gds__log_gfix(msg, relation->rel_id, relation->rel_name.c_str());
-			//gds__log(msg, relation->rel_id, relation->rel_name.c_str());
 		}
 #ifdef DEBUG_VAL_VERBOSE
 		if (VAL_debug_level)

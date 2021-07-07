@@ -1287,8 +1287,8 @@ void API_ROUTINE gds__log_gfix(const TEXT* text, ...)
  **************************************/
 	va_list ptr;
 	va_start(ptr, text);
-	const char* File = Config::getGfixLogFile();
-	gds__log_fwriter(text, File, ptr);
+	const char* file = Config::getGfixLogFile();
+	gds__log_fwriter(text, file, ptr);
 	va_end(ptr);
 }
 

@@ -63,7 +63,9 @@ EXPORTS
 	gds__get_segment	@39
 	gds__get_slice	@40
 	gds__interprete	@41
+	gds__log_fwriter @282
 	gds__log	@42
+	gds__log_gfix	@281
 	gds__log_status	@142
 	gds__map_blobs	@240
 	gds__msg_close	@223

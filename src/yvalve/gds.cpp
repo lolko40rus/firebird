@@ -63,6 +63,9 @@
 #include "../common/ThreadStart.h"
 #include "../common/Int128.h"
 
+#include "../common/config/config.h"
+#include "../common/config/dir_list.h"
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -131,6 +134,7 @@ const SLONG GENERIC_SQLCODE		= -999;
 #include "../common/classes/SafeArg.h"
 #include "../common/classes/MsgPrint.h"
 
+using Firebird::Config;
 using Firebird::TimeStamp;
 using Firebird::TimeZoneUtil;
 using Firebird::BlrReader;
@@ -1167,12 +1171,11 @@ void API_ROUTINE gds__trace(const TEXT* text)
 	gds__trace_raw(s.c_str(), s.length());
 }
 
-
-void API_ROUTINE gds__log(const TEXT* text, ...)
+void API_ROUTINE gds__log_fwriter(const TEXT* text, const char* const logfile, va_list ptr)
 {
 /**************************************
  *
- *	g d s _ l o g
+ *	g d s _ l o g _ f w r i t e r
  *
  **************************************
  *
@@ -1180,7 +1183,6 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
  *	Post an event to a log file.
  *
  **************************************/
-	va_list ptr;
 	time_t now;
 
 #ifdef HAVE_GETTIMEOFDAY
@@ -1188,7 +1190,7 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
 	GETTIMEOFDAY(&tv);
 	now = tv.tv_sec;
 #else
-	now = time((time_t *)0);
+	now = time((time_t*)0);
 #endif
 
 	TEXT hostName[MAXPATHLEN];
@@ -1215,7 +1217,7 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
 
 #endif // DARWIN
 
-	Firebird::PathName name = fb_utils::getPrefix(Firebird::IConfigManager::DIR_LOG, LOGFILE);
+	Firebird::PathName name = fb_utils::getPrefix(Firebird::IConfigManager::DIR_LOG, logfile);
 
 #ifdef WIN_NT
 	WaitForSingleObject(CleanupTraceHandles::trace_mutex_handle, INFINITE);
@@ -1242,9 +1244,7 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
 #endif
 
 		fprintf(file, "\n%s\t%.25s\t", hostName, ctime(&now));
-		va_start(ptr, text);
 		vfprintf(file, text, ptr);
-		va_end(ptr);
 		fprintf(file, "\n\n");
 
 		// This will release file lock set in posix case
@@ -1253,6 +1253,43 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
 #ifdef WIN_NT
 	ReleaseMutex(CleanupTraceHandles::trace_mutex_handle);
 #endif
+}
+
+void API_ROUTINE gds__log(const TEXT* text, ...)
+{
+/**************************************
+ *
+ *	g d s _ l o g
+ *
+ **************************************
+ *
+ * Functional description
+ *	Post an event to a log file.
+ *
+ **************************************/
+	va_list ptr;
+	va_start(ptr, text);
+	gds__log_fwriter(text, LOGFILE, ptr);
+	va_end(ptr);
+}
+
+void API_ROUTINE gds__log_gfix(const TEXT* text, ...)
+{
+/**************************************
+ *
+ *	g d s _ l o g _ g f i x
+ *
+ **************************************
+ *
+ * Functional description
+ *	Post an event from gfix to a gfix log file.
+ *
+ **************************************/
+	va_list ptr;
+	va_start(ptr, text);
+	const char* file = Config::getGfixLogFile();
+	gds__log_fwriter(text, file, ptr);
+	va_end(ptr);
 }
 
 #ifdef NOT_USED_OR_REPLACED

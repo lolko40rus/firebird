@@ -60,6 +60,7 @@ const SINT64 sw_buffers			= 0x0000000020000000L;
 const SINT64 sw_mode			= 0x0000000040000000L;
 const SINT64 sw_set_db_dialect	= 0x0000000080000000L;
 const SINT64 sw_trusted_auth	= QUADCONST(0x0000000100000000);	// Byte 4, Bit 0
+const SINT64 sw_gfix_logfile	= QUADCONST(0x0000000200000000);
 const SINT64 sw_fetch_password	= QUADCONST(0x0000000800000000);
 const SINT64 sw_nolinger		= QUADCONST(0x0000001000000000);
 const SINT64 sw_icu				= QUADCONST(0x0000002000000000);
@@ -124,7 +125,8 @@ enum alice_switches
 	IN_SW_ALICE_NOLINGER			=	47,
 	IN_SW_ALICE_ICU					=	48,
 	IN_SW_ALICE_ROLE				=	49,
-	IN_SW_ALICE_REPLICA				=	50
+	IN_SW_ALICE_REPLICA				=	50,
+	IN_SW_ALICE_GFIXLOGFILE			=	51
 };
 
 static const char* const ALICE_SW_ASYNC	= "ASYNC";
@@ -274,6 +276,9 @@ static const Switches::in_sw_tab_t alice_in_sw_table[] =
 	{IN_SW_ALICE_VERSION, 0, "Z", 0,
 		0, 0, false, false, 54, 1, NULL},
 	// msg 54: \t-z\t\tprint software version number
+	{IN_SW_ALICE_GFIXLOGFILE, 0, "LOGFILE", sw_gfix_logfile,
+		sw_validate, 0, false, false, 140, 3, NULL},
+	// msg 140: \t-file\t\tdefault file name
 /************************************************************************/
 // WARNING: All new switches should be added right before this comments
 /************************************************************************/

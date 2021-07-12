@@ -464,6 +464,19 @@ int alice(Firebird::UtilSvc* uSvc)
 			else
 				ALICE_error(135);	// msg 135: replica mode (none / read_only / read_write) required
 		}
+
+		if (table->in_sw_value & sw_gfix_logfile) {
+			printf(opt);
+			printf("\n");
+			printf(*argv);
+			printf("\n");
+			if (--argc <= 0) {
+				ALICE_error(13);	// msg ?: logfile name required
+			}
+			tdgbl->ALICE_data.ua_gfix_logfile = *argv++;
+			printf(tdgbl->ALICE_data.ua_gfix_logfile);
+			printf("\n");
+		}
 	}
 
 	// put this here since to put it above overly complicates the parsing.

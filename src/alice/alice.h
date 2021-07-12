@@ -77,6 +77,7 @@ struct user_action
 	const char* ua_user;
 	const char* ua_role;
 	const char* ua_password;
+	const char* ua_gfix_logfile;
 #ifdef TRUSTED_AUTH
 	bool ua_trusted;
 #endif

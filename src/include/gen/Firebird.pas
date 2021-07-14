@@ -3777,6 +3777,7 @@ const
 	isc_dpb_set_bind = byte(93);
 	isc_dpb_decfloat_round = byte(94);
 	isc_dpb_decfloat_traps = byte(95);
+	isc_dpb_gfix_logfile = byte(96);
 	isc_dpb_address = byte(1);
 	isc_dpb_addr_protocol = byte(1);
 	isc_dpb_addr_endpoint = byte(2);
@@ -3791,6 +3792,7 @@ const
 	isc_dpb_no_update = byte(16);
 	isc_dpb_repair = byte(32);
 	isc_dpb_ignore = byte(64);
+	isc_dpb_log = byte(128);
 	isc_dpb_shut_cache = $1;
 	isc_dpb_shut_attachment = $2;
 	isc_dpb_shut_transaction = $4;

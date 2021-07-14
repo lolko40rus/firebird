@@ -84,7 +84,7 @@ void	API_ROUTINE gds__interprete_a(SCHAR*, SSHORT*, ISC_STATUS*, SSHORT*);
 
 void	API_ROUTINE gds__log_fwriter(const TEXT*, const char* const, va_list);
 void	API_ROUTINE gds__log(const TEXT*, ...);
-void	API_ROUTINE gds__log_gfix(const TEXT*, ...);
+void	API_ROUTINE gds__log_gfix(const char*, const TEXT*, ...);
 void	API_ROUTINE gds__trace(const char*);
 void	API_ROUTINE gds__trace_raw(const char*, unsigned int = 0);
 void	API_ROUTINE gds__log_status(const TEXT*, const ISC_STATUS*);

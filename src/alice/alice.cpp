@@ -143,6 +143,7 @@ int alice(Firebird::UtilSvc* uSvc)
 	tdgbl->ALICE_data.ua_user = NULL;
 	tdgbl->ALICE_data.ua_role = NULL;
 	tdgbl->ALICE_data.ua_password = NULL;
+	tdgbl->ALICE_data.ua_gfix_logfile = NULL;
 #ifdef TRUSTED_AUTH
 	tdgbl->ALICE_data.ua_trusted = false;
 #endif
@@ -167,6 +168,10 @@ int alice(Firebird::UtilSvc* uSvc)
 
 	while (--argc > 0)
 	{
+		printf(*argv);
+		printf("\n");
+		printf("%d", argc);
+		printf("\n\n");
 		if ((*argv)[0] != '-')
 		{
 			if (database)
@@ -175,6 +180,9 @@ int alice(Firebird::UtilSvc* uSvc)
 				// msg 1: "data base file name (%s) already given",
 			}
 			database = *argv++;
+			printf("database: ");
+			printf(database);
+			printf("\n\n");
 
 			continue;
 		}
@@ -190,12 +198,14 @@ int alice(Firebird::UtilSvc* uSvc)
 		}
 
 		table = switches.findSwitch(opt);
+
 		if (!table)
 		{
 			ALICE_print(2, SafeArg() << opt);	// msg 2: invalid switch %s
 			error = true;
 			break;
 		}
+
 
 		if (table->in_sw == IN_SW_ALICE_X) {
 			tdgbl->ALICE_data.ua_debug++;
@@ -402,6 +412,20 @@ int alice(Firebird::UtilSvc* uSvc)
 			}
 			++argv;
 		}
+		
+		if (table->in_sw_value & sw_gfix_logfile) {
+			printf("Alice.cpp\n");
+			printf(opt);
+			printf("\n");
+			printf(*argv);
+			printf("\n");
+			if (--argc <= 0) {
+				//ALICE_error(13);	// msg ?: logfile name required
+			}
+			tdgbl->ALICE_data.ua_gfix_logfile = *argv++;
+			printf(tdgbl->ALICE_data.ua_gfix_logfile);
+			printf("\n");
+		}
 
 		if (table->in_sw_value & sw_disable)
 		{
@@ -465,18 +489,6 @@ int alice(Firebird::UtilSvc* uSvc)
 				ALICE_error(135);	// msg 135: replica mode (none / read_only / read_write) required
 		}
 
-		if (table->in_sw_value & sw_gfix_logfile) {
-			printf(opt);
-			printf("\n");
-			printf(*argv);
-			printf("\n");
-			if (--argc <= 0) {
-				ALICE_error(13);	// msg ?: logfile name required
-			}
-			tdgbl->ALICE_data.ua_gfix_logfile = *argv++;
-			printf(tdgbl->ALICE_data.ua_gfix_logfile);
-			printf("\n");
-		}
 	}
 
 	// put this here since to put it above overly complicates the parsing.

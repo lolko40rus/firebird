@@ -152,7 +152,6 @@ enum tdr_state_vals {
 	TRA_unknown		= 4 		// database couldn't be reattached, state is unknown
 };
 
-
 // Global data
 
 class AliceGlobals : public Firebird::ThreadData
@@ -167,6 +166,7 @@ private:
 	}
 
 public:
+
 	AliceGlobals(Firebird::UtilSvc* us)
 		: ThreadData(ThreadData::tddALICE),
 		ALICE_default_pool(0),

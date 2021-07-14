@@ -652,7 +652,7 @@ static void explain_pp_bits(const UCHAR bits, Firebird::string& names)
 }
 
 
-bool VAL_validate(thread_db* tdbb, USHORT switches)
+bool VAL_validate(thread_db* tdbb, USHORT switches, const char* filename)
 {
 /**************************************
  *
@@ -680,6 +680,14 @@ bool VAL_validate(thread_db* tdbb, USHORT switches)
 
 	if (!(switches & isc_dpb_no_update))
 		flags |= Validation::VDR_update;
+
+	if (switches & isc_dpb_log) {
+		printf("validation.cpp log set\n");
+		flags |= Validation::VDR_log;
+	}
+
+	Validation::VDR_filename = filename;
+	printf("VAL_Validate VDR_filename %s\n", Validation::VDR_filename);
 
 	return att->att_validation->run(tdbb, flags);
 }
@@ -761,7 +769,7 @@ static int validate(Firebird::UtilSvc* svc)
 		Jrd::ContextPoolHolder context(tdbb, val_pool);
 
 		Validation control(tdbb, svc);
-		control.run(tdbb, Validation::VDR_records | Validation::VDR_online | Validation::VDR_partial);
+		control.run(tdbb, Validation::VDR_records | Validation::VDR_online | Validation::VDR_partial | Validation::VDR_log);
 
 		att->att_use_count--;
 	}
@@ -805,6 +813,7 @@ int VAL_service(Firebird::UtilSvc* svc)
 
 namespace Jrd
 {
+const char* Validation::VDR_filename = "";
 
 const Validation::MSG_ENTRY Validation::vdr_msg_table[VAL_MAX_ERROR] =
 {
@@ -867,7 +876,6 @@ Validation::Validation(thread_db* tdbb, UtilSvc* uSvc) :
 	vdr_rel_records = NULL;
 	vdr_idx_records = NULL;
 	vdr_page_bitmap = NULL;
-
 	vdr_service = uSvc;
 	vdr_lock_tout = -10;
 
@@ -1025,8 +1033,8 @@ bool Validation::run(thread_db* tdbb, USHORT flags)
 			vdr_err_counts[i] = 0;
 
 		ThreadSweepGuard sweepGuard(tdbb);
-
-		gds__log_gfix("Database: %s\n\tValidation started", fileName.c_str());
+		
+		gds__log_gfix(Validation::VDR_filename, "Database: %s\n\tValidation started", fileName.c_str());
 
 		walk_database();
 		if (vdr_errors || vdr_warns)
@@ -1044,15 +1052,18 @@ bool Validation::run(thread_db* tdbb, USHORT flags)
 		}
 
 		cleanup();
-
-		gds__log_gfix("Database: %s\n\tValidation finished: %d errors, %d warnings, %d fixed",
+	
+		gds__log_gfix(Validation::VDR_filename, "Database: %s\n\tValidation finished: %d errors, %d warnings, %d fixed",
 			fileName.c_str(), vdr_errors, vdr_warns, vdr_fixed);
 	}	// try
 	catch (const Firebird::Exception& ex)
 	{
+		printf("Database: %s\n\tValidation aborted\n", fileName.c_str());
+
 		ex.stuffException(tdbb->tdbb_status_vector);
 
 		Firebird::string err;
+
 		err.printf("Database: %s\n\tValidation aborted", fileName.c_str());
 		iscLogStatus(err.c_str(), tdbb->tdbb_status_vector);
 
@@ -1144,11 +1155,11 @@ Validation::RTN Validation::corrupt(int err_code, const jrd_rel* relation, ...)
 
 	if (relation)
 	{
-		gds__log_gfix("Database: %s\n\t%s in table %s (%d)",
+		gds__log_gfix(Validation::VDR_filename, "Database: %s\n\t%s in table %s (%d)",
 			fn, s.c_str(), relation->rel_name.c_str(), relation->rel_id);
 	}
 	else {
-		gds__log_gfix("Database: %s\n\t%s", fn, s.c_str());
+		gds__log_gfix(Validation::VDR_filename, "Database: %s\n\t%s", fn, s.c_str());
 	}
 
 	s.append("\n");
@@ -3088,7 +3099,7 @@ Validation::RTN Validation::walk_relation(jrd_rel* relation)
 			const char* msg = relation->rel_name.length() > 0 ?
 				"bugcheck during scan of table %d (%s)" :
 				"bugcheck during scan of table %d";
-			gds__log_gfix(msg, relation->rel_id, relation->rel_name.c_str());
+			gds__log_gfix(Validation::VDR_filename, msg, relation->rel_id, relation->rel_name.c_str());
 		}
 #ifdef DEBUG_VAL_VERBOSE
 		if (VAL_debug_level)

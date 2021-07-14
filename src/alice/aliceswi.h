@@ -45,7 +45,7 @@ const SINT64 sw_two_phase		= 0x0000000000004000L;
 const SINT64 sw_housekeeping	= 0x0000000000008000L;
 const SINT64 sw_kill			= 0x0000000000010000L;	// Byte 2, Bit 0
 //const SINT64 sw_begin_log		= 0x0000000000020000L;
-//const SINT64 sw_quit_log		= 0x0000000000040000L;
+const SINT64 sw_gfix_logfile	= 0x0000000000040000L;
 const SINT64 sw_write			= 0x0000000000080000L;
 const SINT64 sw_no_reserve		= 0x0000000000100000L;
 const SINT64 sw_user			= 0x0000000000200000L;
@@ -60,7 +60,7 @@ const SINT64 sw_buffers			= 0x0000000020000000L;
 const SINT64 sw_mode			= 0x0000000040000000L;
 const SINT64 sw_set_db_dialect	= 0x0000000080000000L;
 const SINT64 sw_trusted_auth	= QUADCONST(0x0000000100000000);	// Byte 4, Bit 0
-const SINT64 sw_gfix_logfile	= QUADCONST(0x0000000200000000);
+//const SINT64 sw_gfix_logfile	= 0x0000000000020000L;
 const SINT64 sw_fetch_password	= QUADCONST(0x0000000800000000);
 const SINT64 sw_nolinger		= QUADCONST(0x0000001000000000);
 const SINT64 sw_icu				= QUADCONST(0x0000002000000000);
@@ -276,8 +276,8 @@ static const Switches::in_sw_tab_t alice_in_sw_table[] =
 	{IN_SW_ALICE_VERSION, 0, "Z", 0,
 		0, 0, false, false, 54, 1, NULL},
 	// msg 54: \t-z\t\tprint software version number
-	{IN_SW_ALICE_GFIXLOGFILE, 0, "LOGFILE", sw_gfix_logfile,
-		sw_validate, 0, false, false, 140, 3, NULL},
+	{IN_SW_ALICE_GFIXLOGFILE, isc_dpb_gfix_logfile, "LOGFILE", sw_gfix_logfile,
+		sw_validate, 0, false, false, 53, 3, NULL},
 	// msg 140: \t-file\t\tdefault file name
 /************************************************************************/
 // WARNING: All new switches should be added right before this comments

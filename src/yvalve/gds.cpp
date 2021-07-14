@@ -1273,7 +1273,7 @@ void API_ROUTINE gds__log(const TEXT* text, ...)
 	va_end(ptr);
 }
 
-void API_ROUTINE gds__log_gfix(const TEXT* text, ...)
+void API_ROUTINE gds__log_gfix(const char* logfilename, const TEXT* text, ...)
 {
 /**************************************
  *
@@ -1288,6 +1288,11 @@ void API_ROUTINE gds__log_gfix(const TEXT* text, ...)
 	va_list ptr;
 	va_start(ptr, text);
 	const char* file = Config::getGfixLogFile();
+	printf("\ngds__log_gfix.cpp; file %s; filename %s|\n%s\n", file, logfilename, text);
+	if (strlen(logfilename) != 0) {
+		file = logfilename;
+	}
+	printf("\ngds__log_gfix.cpp; file %s\n", file);
 	gds__log_fwriter(text, file, ptr);
 	va_end(ptr);
 }

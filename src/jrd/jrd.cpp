@@ -1111,6 +1111,7 @@ namespace Jrd
 		PathName	dpb_set_bind;
 		string	dpb_decfloat_round;
 		string	dpb_decfloat_traps;
+		string	dpb_gfix_logfile;
 
 	public:
 		static const ULONG DPB_FLAGS_MASK = DBB_damaged;
@@ -2072,7 +2073,7 @@ JAttachment* JProvider::internalAttach(CheckStatusWrapper* user_status, const ch
 
 				VIO_fini(tdbb);
 
-				if (!VAL_validate(tdbb, options.dpb_verify))
+				if (!VAL_validate(tdbb, options.dpb_verify, options.dpb_gfix_logfile.c_str()))
 					ERR_punt();
 			}
 
@@ -2122,6 +2123,11 @@ JAttachment* JProvider::internalAttach(CheckStatusWrapper* user_status, const ch
 				validateAccess(tdbb, attachment, CHANGE_HEADER_SETTINGS);
 				PAG_set_force_write(tdbb, options.dpb_force_write);
 			}
+
+			//if (options.dpb_gfix_logfile != NULL) {
+			//	//validateAccess(tdbb, attachment, CHANGE_HEADER_SETTINGS);
+			//	dbb->dbb_gfix_logfile = options.dpb_gfix_logfile.c_str();
+			//}
 
 			if (options.dpb_set_no_reserve)
 			{
@@ -6683,6 +6689,11 @@ void DatabaseOptions::get(const UCHAR* dpb, USHORT dpb_length, bool& invalid_cli
 			dpb_verify = (USHORT) rdr.getInt();
 			if (dpb_verify & isc_dpb_ignore)
 				dpb_flags |= DBB_damaged;
+			break;
+
+		case isc_dpb_gfix_logfile:
+			rdr.getString(dpb_gfix_logfile);
+			printf("jrd.cpp %s\n", dpb_gfix_logfile.c_str());
 			break;
 
 		case isc_dpb_trace:

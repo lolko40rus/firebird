@@ -221,7 +221,6 @@ static void buildDpb(Firebird::ClumpletWriter& dpb, const SINT64 switches)
 		if (switches & sw_ignore)
 			b |= isc_dpb_ignore;
 		if (switches & sw_gfix_logfile) {
-			printf("exe.cpp isc_dpb_log\n");
 			b |= isc_dpb_log;
 		}
 		dpb.insertByte(isc_dpb_verify, b);
@@ -374,7 +373,6 @@ static void buildDpb(Firebird::ClumpletWriter& dpb, const SINT64 switches)
 	if (tdgbl->ALICE_data.ua_gfix_logfile) {
 		dpb.insertString(isc_dpb_gfix_logfile,
 			tdgbl->ALICE_data.ua_gfix_logfile, fb_strlen(tdgbl->ALICE_data.ua_gfix_logfile));
-		printf("exe.cpp isc_dpb_gfix_logfile\n");
 	}
 }
 

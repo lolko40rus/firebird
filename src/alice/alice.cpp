@@ -168,10 +168,6 @@ int alice(Firebird::UtilSvc* uSvc)
 
 	while (--argc > 0)
 	{
-		printf(*argv);
-		printf("\n");
-		printf("%d", argc);
-		printf("\n\n");
 		if ((*argv)[0] != '-')
 		{
 			if (database)
@@ -180,9 +176,6 @@ int alice(Firebird::UtilSvc* uSvc)
 				// msg 1: "data base file name (%s) already given",
 			}
 			database = *argv++;
-			printf("database: ");
-			printf(database);
-			printf("\n\n");
 
 			continue;
 		}
@@ -414,17 +407,10 @@ int alice(Firebird::UtilSvc* uSvc)
 		}
 		
 		if (table->in_sw_value & sw_gfix_logfile) {
-			printf("Alice.cpp\n");
-			printf(opt);
-			printf("\n");
-			printf(*argv);
-			printf("\n");
 			if (--argc <= 0) {
 				//ALICE_error(13);	// msg ?: logfile name required
 			}
 			tdgbl->ALICE_data.ua_gfix_logfile = *argv++;
-			printf(tdgbl->ALICE_data.ua_gfix_logfile);
-			printf("\n");
 		}
 
 		if (table->in_sw_value & sw_disable)

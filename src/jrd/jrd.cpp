@@ -6693,7 +6693,6 @@ void DatabaseOptions::get(const UCHAR* dpb, USHORT dpb_length, bool& invalid_cli
 
 		case isc_dpb_gfix_logfile:
 			rdr.getString(dpb_gfix_logfile);
-			printf("jrd.cpp %s\n", dpb_gfix_logfile.c_str());
 			break;
 
 		case isc_dpb_trace:

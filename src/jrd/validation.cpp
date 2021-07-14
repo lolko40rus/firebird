@@ -682,12 +682,10 @@ bool VAL_validate(thread_db* tdbb, USHORT switches, const char* filename)
 		flags |= Validation::VDR_update;
 
 	if (switches & isc_dpb_log) {
-		printf("validation.cpp log set\n");
 		flags |= Validation::VDR_log;
 	}
 
 	Validation::VDR_filename = filename;
-	printf("VAL_Validate VDR_filename %s\n", Validation::VDR_filename);
 
 	return att->att_validation->run(tdbb, flags);
 }

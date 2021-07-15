@@ -220,9 +220,6 @@ static void buildDpb(Firebird::ClumpletWriter& dpb, const SINT64 switches)
 			b |= isc_dpb_repair;
 		if (switches & sw_ignore)
 			b |= isc_dpb_ignore;
-		if (switches & sw_gfix_logfile) {
-			b |= isc_dpb_log;
-		}
 		dpb.insertByte(isc_dpb_verify, b);
 	}
 	else if (switches & sw_housekeeping) {

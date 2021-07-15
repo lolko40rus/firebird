@@ -681,10 +681,6 @@ bool VAL_validate(thread_db* tdbb, USHORT switches, const char* filename)
 	if (!(switches & isc_dpb_no_update))
 		flags |= Validation::VDR_update;
 
-	if (switches & isc_dpb_log) {
-		flags |= Validation::VDR_log;
-	}
-
 	Validation::VDR_filename = filename;
 
 	return att->att_validation->run(tdbb, flags);
@@ -767,7 +763,7 @@ static int validate(Firebird::UtilSvc* svc)
 		Jrd::ContextPoolHolder context(tdbb, val_pool);
 
 		Validation control(tdbb, svc);
-		control.run(tdbb, Validation::VDR_records | Validation::VDR_online | Validation::VDR_partial | Validation::VDR_log);
+		control.run(tdbb, Validation::VDR_records | Validation::VDR_online | Validation::VDR_partial);
 
 		att->att_use_count--;
 	}

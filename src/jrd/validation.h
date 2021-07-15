@@ -61,7 +61,6 @@ public:
 	static const USHORT VDR_repair = 0x04;		// fix non-simple things (-mend)
 	static const USHORT VDR_records = 0x08;		// Walk all records
 	static const USHORT VDR_partial = 0x10;		// Walk only (some) relations
-	static const USHORT VDR_log = 0x20;			// log file
 
 	static const char* VDR_filename;			// log file name
 private:

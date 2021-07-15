@@ -202,7 +202,6 @@
 #define isc_dpb_no_update                 16
 #define isc_dpb_repair                    32
 #define isc_dpb_ignore                    64
-#define isc_dpb_log						  128
 
 /***********************************/
 /* isc_dpb_shutdown specific flags */

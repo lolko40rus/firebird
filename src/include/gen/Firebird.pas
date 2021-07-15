@@ -3792,7 +3792,6 @@ const
 	isc_dpb_no_update = byte(16);
 	isc_dpb_repair = byte(32);
 	isc_dpb_ignore = byte(64);
-	isc_dpb_log = byte(128);
 	isc_dpb_shut_cache = $1;
 	isc_dpb_shut_attachment = $2;
 	isc_dpb_shut_transaction = $4;
